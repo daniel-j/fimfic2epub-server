@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Install bookmarklet</title>
+</head>
+<body>
+
+<a href="" id="bookmarklet">📕 fimfic2epub</a>
+
+<script type="text/javascript">
+  // converted with http://mrcoles.com/bookmarklet/
+  // uses https://www.npmjs.com/package/bookmarklet
+  var code = "javascript:(function()%7Bvar%20m%20%3D%20document.location.pathname.match(%2F%5E%5C%2Fstory%5C%2F(%5Cd*)%2F)%3Bif%20(m)%20%7Bvar%20storyId%20%3D%20m%5B1%5D%3Bdocument.location.href%20%3D%20'PROTOCOL%3A%2F%2FHOST%2Fstory%2F'%20%2B%20storyId%20%2B%20'%2Fdownload'%3B%7D%7D)()"
+
+  document.getElementById('bookmarklet').href = code.replace('PROTOCOL', document.location.protocol.replace(':', '')).replace('HOST', escape(document.location.host))
+</script>
+
+</body>
+</html>
