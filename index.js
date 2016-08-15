@@ -27,6 +27,6 @@ app.use(route.get('/', function *() {
   yield send(this, './index.html')
 }))
 
-app.listen()
+app.listen(port)
 
 console.log('Listening on port ' + port)
