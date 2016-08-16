@@ -15,7 +15,7 @@
     "ebook"
   ],
   "dependencies": {
-    "fimfic2epub": "^1.1.2",
+    "fimfic2epub": "^1.1.5",
     "koa": "^1.2.1",
     "koa-cluster": "^0.2.2",
     "koa-favicon": "^1.2.1",
