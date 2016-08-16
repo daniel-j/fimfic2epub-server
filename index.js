@@ -17,19 +17,24 @@ app.use(favicon(__dirname + '/favicon.ico'))
 
 app.use(logger())
 
-app.use(route.get('/story/:id/download', function *(id) {
+app.use(route.get('/', function *() {
+  yield send(this, './index.html')
+}))
+
+function *handleDownload (id) {
   const ffc = new FimFic2Epub(id)
 
   yield ffc.download()
 
+  let file = yield ffc.getFile()
+
   this.response.type = 'application/epub+zip'
   this.response.attachment(ffc.filename)
 
-  this.response.body = ffc.streamFile()
-}))
+  this.response.body = file
+}
 
-app.use(route.get('/', function *() {
-  yield send(this, './index.html')
-}))
+app.use(route.get('/story/:id/download', handleDownload))
+app.use(route.get('/story/:id/download/*', handleDownload))
 
 module.exports = app

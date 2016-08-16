@@ -4,15 +4,37 @@
   <title>fimfic2epub-server</title>
 </head>
 <body>
+
+<h1>fimfic2epub</h1>
+
+<h2>Browser extension</h2>
+Install for Google Chrome <a href="https://chrome.google.com/webstore/detail/fimfic2epub/fiijkoniocipeemlflajmmaecfhfcand">here</a>.
+<br/>
+To use it after install, go to a story page on fimfiction and press the EPUB download below the story's chapters. Wait a while for the EPUB to generate.
+
+
 <h2>Bookmarklet</h2>
 Drag this to your bookmarks:
 <a href="" id="bookmarklet" onclick="return false">📕 fimfic2epub</a>
+<br/>
+To use it, go to a story page on fimfiction and click the bookmark. Wait a while for the EPUB to generate.
 
-<h2>Direct download</h2>
-<form id="directform">
-Story id/url: <input id="storyid" name="storyid"><br/>
-<button>Generate</button>
+<h2>Direct story download</h2>
+
+<form id="genform">
+Fimfiction story id/url:<br/><input id="inputStory" name="inputStory" type="url" size=70/>
+<br/>
+<br/>
+<button>Download story</button>
 </form>
+<br/>
+After pressing download, wait a while for the EPUB to generate.
+<br/>
+<br/>
+<hr/>
+Read more about fimfic2epub <a href="https://github.com/daniel-j/fimfic2epub#readme">here</a>.
+<br/>
+Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-server">here</a>.
 
 <script type="text/javascript">
   // converted with http://mrcoles.com/bookmarklet/
@@ -21,16 +43,27 @@ Story id/url: <input id="storyid" name="storyid"><br/>
 
   document.getElementById('bookmarklet').href = code.replace('PROTOCOL', document.location.protocol.replace(':', '')).replace('HOST', escape(document.location.host))
 
-  var directform = document.getElementById('directform')
+  var genform = document.getElementById('genform')
+  var inputStory = document.getElementById('inputStory')
 
-  directform.addEventListener('submit', function (e) {
+  genform.addEventListener('submit', function (e) {
     e.preventDefault()
-    var story = document.getElementById('storyid').value
-    var storyId = story
-    if (isNaN(storyId)) {
-      storyId = storyId.match(/\/story\/(\d+)/)[1]
+    var story = inputStory.value
+    var storyId = ''
+    if (isNaN(story)) {
+      var m = story.match(/\/story\/(\d+)/)
+      if (m) {
+        storyId = m[1]
+      }
+    } else {
+      storyId = story
     }
-    document.location.href = '/story/' + storyId + '/download'
+    if (isNaN(storyId) || storyId === '') {
+      alert('Invalid story id/url')
+    } else {
+      document.location.href = '/story/' + storyId + '/download/fimfic_' + storyId + '.epub'
+      inputStory.value = ''
+    }
   }, false)
 </script>
 
