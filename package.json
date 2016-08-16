@@ -7,7 +7,7 @@
     "fimfic2epub-server": "./index.js"
   },
   "scripts": {
-    "start": "koa-cluster index"
+    "start": "./index.js"
   },
   "keywords": [
     "epub",
@@ -17,7 +17,6 @@
   "dependencies": {
     "fimfic2epub": "^1.1.5",
     "koa": "^1.2.1",
-    "koa-cluster": "^0.2.2",
     "koa-favicon": "^1.2.1",
     "koa-logger": "^1.3.0",
     "koa-route": "^2.4.2",

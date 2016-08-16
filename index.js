@@ -1,19 +1,25 @@
 #!/usr/bin/env node
-
-const FimFic2Epub = require('fimfic2epub')
+'use strict'
 
 const koa = require('koa')
 const route = require('koa-route')
 const logger = require('koa-logger')
 const send = require('koa-send')
 const favicon = require('koa-favicon')
-const app = koa()
-const config = require(__dirname + '/config.json')
-const thenify = require('thenify')
 const fs = require('fs')
+const thenify = require('thenify')
+
+const FimFic2Epub = require('fimfic2epub')
+
+const generateEpub = require(__dirname + '/generator')
+const config = require(__dirname + '/config.json')
+
+const app = koa()
 
 const fsreadFile = thenify(fs.readFile)
-const fswriteFile = thenify(fs.writeFile)
+const fsStat = thenify(fs.stat)
+
+const promiseCache = new Map()
 
 app.name = 'fimfic2epub-server'
 app.port = config.port
@@ -33,48 +39,54 @@ function *handleDownload (id) {
     return
   }
 
-  let useCache = true
+  let useCache = false
   let storyInfo, cachedInfo
+  let file, filename
   let infoFile = 'archive/' + id + '.json'
   let storyFile = 'archive/' + id + '.epub'
 
-  try {
-    cachedInfo = JSON.parse(yield fsreadFile(infoFile))
-  } catch (err) { }
-  try {
-    storyInfo = yield FimFic2Epub.fetchStoryInfo(id)
-  } catch (err) { }
+  let inProgress = promiseCache.has(id)
 
-  if (storyInfo && !cachedInfo) {
-    useCache = false
-  } else if (storyInfo && cachedInfo) {
-    if (JSON.stringify(storyInfo) !== JSON.stringify(cachedInfo)) {
-      useCache = false
+  if (!inProgress) {
+    try {
+      cachedInfo = JSON.parse(yield fsreadFile(infoFile))
+      yield fsStat(storyFile)
+      useCache = true
+    } catch (err) { }
+
+    try {
+      storyInfo = yield FimFic2Epub.fetchStoryInfo(id)
+    } catch (err) {
+      console.error(err)
+      return
     }
-  } else if (!storyInfo && !cachedInfo) {
-    return
-  }
 
-  storyInfo = storyInfo || cachedInfo
+    if (useCache) {
+      if (JSON.stringify(storyInfo) !== JSON.stringify(cachedInfo)) {
+        useCache = false
+      }
+    }
 
-  let file, filename
+    if (useCache) {
+      file = yield fsreadFile(storyFile)
+      filename = FimFic2Epub.getFilename(storyInfo)
+      console.log('Serving cached ' + filename)
+    } else {
+      let pr = generateEpub(id)
+      promiseCache.set(id, pr)
 
-  if (useCache) {
-    file = yield fsreadFile(storyFile)
-    filename = FimFic2Epub.getFilename(storyInfo)
-    console.log('Serving cached ' + filename)
+      let o = yield pr
+      file = o.file
+      filename = o.filename
+
+      promiseCache.delete(id)
+      console.log('Serving generated ' + filename)
+      fs.writeFile(storyFile, file)
+      fs.writeFile(infoFile, JSON.stringify(storyInfo))
+    }
   } else {
-    const ffc = new FimFic2Epub(id)
-
-    yield ffc.download()
-
-    file = yield ffc.getFile()
-    filename = ffc.filename
-
-    console.log('Serving generated ' + filename)
-
-    fswriteFile(storyFile, file)
-    fswriteFile(infoFile, JSON.stringify(storyInfo))
+    // hook on to an already running generator
+    ({file, filename} = yield promiseCache.get(id))
   }
 
   this.response.type = 'application/epub+zip'
@@ -86,4 +98,5 @@ function *handleDownload (id) {
 app.use(route.get('/story/:id/download', handleDownload))
 app.use(route.get('/story/:id/download/*', handleDownload))
 
-module.exports = app
+app.listen(app.port)
+console.log('Listening on', app.port)
