@@ -6,9 +6,14 @@ const koa = require('koa')
 const route = require('koa-route')
 const logger = require('koa-logger')
 const send = require('koa-send')
+const favicon = require('koa-favicon')
 const app = koa()
+const config = require(__dirname + '/config.json')
 
-const port = process.argv[2] || 3000
+app.name = 'fimfic2epub-server'
+app.port = config.port
+
+app.use(favicon(__dirname + '/favicon.ico'))
 
 app.use(logger())
 
@@ -27,6 +32,4 @@ app.use(route.get('/', function *() {
   yield send(this, './index.html')
 }))
 
-app.listen(port)
-
-console.log('Listening on port ' + port)
+module.exports = app
