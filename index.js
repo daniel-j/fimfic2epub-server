@@ -12,6 +12,7 @@ const config = require(__dirname + '/config.json')
 
 app.name = 'fimfic2epub-server'
 app.port = config.port
+if (config.proxy) app.proxy = config.proxy
 
 app.use(favicon(__dirname + '/favicon.ico'))
 
