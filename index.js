@@ -52,11 +52,15 @@ function * handleDownload (id) {
   let inProgress = promiseCache.has(id)
 
   if (!inProgress) {
-    try {
-      cachedInfo = JSON.parse(yield fsreadFile(infoFile))
-      yield fsStat(storyFile)
-      useCache = true
-    } catch (err) { }
+    if (cacheEnabled) {
+      try {
+        cachedInfo = JSON.parse(yield fsreadFile(infoFile, 'binary'))
+        yield fsStat(storyFile)
+        useCache = true
+      } catch (err) {
+        console.error('' + err)
+      }
+    }
 
     try {
       storyInfo = yield FimFic2Epub.fetchStoryInfo(id)
@@ -65,8 +69,9 @@ function * handleDownload (id) {
       return
     }
 
-    if (useCache) {
+    if (cacheEnabled && useCache) {
       if (JSON.stringify(storyInfo) !== JSON.stringify(cachedInfo)) {
+        console.log('Cached info and fetched info differ')
         useCache = false
       }
     }
@@ -85,7 +90,7 @@ function * handleDownload (id) {
 
       console.log('Serving generated ' + filename)
       fs.writeFile(storyFile, file)
-      fs.writeFile(infoFile, JSON.stringify(storyInfo))
+      fs.writeFile(infoFile, JSON.stringify(storyInfo), 'binary')
     }
   } else {
     // hook on to an already running generator
