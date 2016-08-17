@@ -1,45 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8"/>
   <title>fimfic2epub-server</title>
+  <style type="text/css">
+    body {
+      margin: 0px;
+      padding: 15px;
+      padding-top: 25px;
+      max-width: 800px;
+    }
+    #logo {
+      float: left;
+      height: 44px;
+      margin-right: 25px;
+    }
+    h1 {
+      font-weight: normal;
+      font-style: italic;
+      font-size: 52px;
+      margin-bottom: 20px;
+      margin-top: 0px;
+      line-height: 40px;
+    }
+    h2 {
+      font-weight: normal;
+      font-style: italic;
+      margin-bottom: 0.1em;
+    }
+    p {
+      margin: 0;
+      text-align: justify
+    }
+    #addon {
+
+    }
+    #bookmarklet {
+      display: inline-block;
+      font-size: 20px;
+      margin: 15px;
+      padding: 7px;
+      border: 1px dashed #444;
+      background-color: #efefef;
+      color: black;
+      text-decoration: none;
+      cursor: move;
+    }
+    #inputStory {
+      font-size: 18px;
+      padding: 8px;
+      border: 1px solid black;
+      font-family: serif;
+      width: 80%;
+    }
+    button, .button {
+      display: inline-block;
+      background-color: #DDD;
+      border: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      font-style: italic;
+      font-family: serif;
+      cursor: pointer;
+      color: black;
+      text-decoration: none;
+    }
+    button:active, .button:active {
+      background-color: black;
+      color: white;
+    }
+    button:focus {
+      outline: none;
+    }
+    hr {
+      border: none;
+      border-bottom: 1px solid black;
+      margin: 1em 0;
+    }
+  </style>
 </head>
 <body>
 
-<h1>fimfic2epub</h1>
+<img src="fimfic2epub-logo.png" id="logo">
+<h1>fimfic<strong>2</strong>epub</h1>
 
-This is a tool to generate better EPUB ebooks from fimfiction stories. It's also a Chrome/Firefox extension, replacing the default EPUB download option with this tool.
+<p>This is a tool to generate better EPUB ebooks from <a href="http://www.fimfiction.net/">Fimfiction</a> stories. It's also a Chrome/Firefox extension, replacing the default EPUB download option with this tool. Their EPUB exporter removes all formatting and images from the stories, something that this tool fixes.
+<br/>
+Here's what a generated EPUB looks like: <a href="http://books.djazz.se/?epub=epub_content%2Fsummer_island">Summer Island</a>; It was generated from <a href="http://www.fimfiction.net/story/289663/summer-island">this story</a>.
+<br/>
+You can send me a PM on my <a href="http://www.fimfiction.net/user/djazz">Fimfiction profile</a> if you want to contact me.</p>
 
-<h2>Demo</h2>
-You can have a look at what a generated EPUB looks like <a href="http://books.djazz.se/?epub=epub_content%2Fsummer_island">here</a>. It was generated from the story <a href="http://www.fimfiction.net/story/289663/summer-island">Summer Island</a>.
-
-<h2>Browser extension</h2>
-Install for Google Chrome <a href="https://chrome.google.com/webstore/detail/fimfic2epub/fiijkoniocipeemlflajmmaecfhfcand">here</a>.
+<h2 id="extension">Browser extension</h2>
+<p><a href="https://chrome.google.com/webstore/detail/fimfic2epub/fiijkoniocipeemlflajmmaecfhfcand" class="button" id="install-chrome">Install Chrome extension</a>
 <br/>
 To use it after install, go to a story page on fimfiction and press the EPUB download below the story's chapters. Wait a while for the EPUB to generate.
+<br/>
+Firefox is supported, but it's not been uploaded to their Add-ons page yet.</p>
 
 
 <h2>Bookmarklet</h2>
-Drag this to your bookmarks:
-<a href="" id="bookmarklet" onclick="return false">📕 fimfic2epub</a>
-<br/>
-To use it, go to a story page on fimfiction and click the bookmark. Wait a while for the EPUB to generate.
+<p>Drag this to your bookmarks:</p>
+<a href="" id="bookmarklet" onclick="return false">📕 <em>fimfic<strong>2</strong>epub</em></a>
+<p>To use it, go to a story page on fimfiction and click the bookmark. Wait a while for the EPUB to generate.</p>
 
-<h2>Direct story download</h2>
+<h2 id="download">Direct story download</h2>
 
 <form id="genform">
-Fimfiction story id/url:<br/><input id="inputStory" name="inputStory" size=70/>
+Fimfiction story id/url:<br/><input id="inputStory" name="inputStory" size=50/>
+<br/>
+<br/>
+<em>Kobo eReaders only:</em><br/>
+<input type="checkbox" name="kepub" id="inputKepub"/> <label for="inputKepub">Download with file extension .kepub.epub</label>
 <br/>
 <br/>
 <button>Download story</button>
 </form>
 <br/>
-After pressing download, wait a while for the EPUB to generate.
+After clicking download, wait a while for the EPUB to generate.
 <br/>
 <br/>
+<br/>
+
 <hr/>
-Read more about fimfic2epub <a href="https://github.com/daniel-j/fimfic2epub#readme">here</a>.
+<p><em>Read more about the fimfic2epub converter <a href="https://github.com/daniel-j/fimfic2epub#readme">on Github</a>.
 <br/>
-Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-server">here</a>.
+Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-server">here</a>.</em></p>
+<br/>
+<br/>
+<br/>
+<br/>
 
 <script type="text/javascript">
   // converted with http://mrcoles.com/bookmarklet/
@@ -50,6 +139,7 @@ Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-
 
   var genform = document.getElementById('genform')
   var inputStory = document.getElementById('inputStory')
+  var inputKepub = document.getElementById('inputKepub')
 
   genform.addEventListener('submit', function (e) {
     e.preventDefault()
@@ -67,7 +157,12 @@ Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-
     if (isNaN(storyId) || storyId <= 0) {
       alert('Invalid story id/url')
     } else {
-      document.location.href = '/story/' + storyId + '/download/fimfic_' + storyId + '.epub'
+      var url = '/story/' + storyId + '/download/fimfic_' + storyId
+      if (inputKepub.checked) {
+        url += '.kepub'
+      }
+      url += '.epub'
+      document.location.href = url
     }
   }, false)
 </script>
