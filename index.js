@@ -71,7 +71,7 @@ function * handleDownload (id) {
 
     if (cacheEnabled && useCache) {
       if (JSON.stringify(storyInfo) !== JSON.stringify(cachedInfo)) {
-        console.log('Cached info and fetched info differ')
+        console.log('Cached metadata differ')
         useCache = false
       }
     }
