@@ -19,6 +19,12 @@ function * handleDownload (id) {
     return
   }
 
+  let outputKepub = false
+
+  if (/\.kepub\.epub$/.test(this.request.url)) {
+    outputKepub = true
+  }
+
   let cacheEnabled = !!config.archive
   let useCache = false
   let storyInfo, cachedInfo
@@ -55,6 +61,7 @@ function * handleDownload (id) {
 
     if (cacheEnabled && useCache) {
       filename = FimFic2Epub.getFilename(storyInfo)
+      if (outputKepub) filename = filename.replace(/\.epub$/, '.kepub.epub')
       console.log('Serving cached ' + filename)
       this.response.attachment(filename)
       yield sendfile(this, storyFile)
@@ -64,6 +71,7 @@ function * handleDownload (id) {
       promiseCache.set(id, pr)
 
       ;({ file, filename } = yield pr)
+      if (outputKepub) filename = filename.replace(/\.epub$/, '.kepub.epub')
 
       promiseCache.delete(id)
 
@@ -75,6 +83,8 @@ function * handleDownload (id) {
     // hook on to an already running generator
     console.log('Hooking on to running epub generator for story ' + id)
     ;({ file, filename } = yield promiseCache.get(id))
+    if (outputKepub) filename = filename.replace(/\.epub$/, '.kepub.epub')
+    console.log('Serving ' + filename)
   }
 
   this.response.type = 'epub'
