@@ -7,12 +7,13 @@ const logger = require('koa-logger')
 const send = require('koa-send')
 const favicon = require('koa-favicon')
 const fs = require('fs')
+const path = require('path')
 const thenify = require('thenify')
 
 const FimFic2Epub = require('fimfic2epub')
 
-const generateEpub = require(__dirname + '/generator')
-const config = require(__dirname + '/config.json')
+const generateEpub = require(path.join(__dirname, '/generator'))
+const config = require(path.join(__dirname, '/config.json'))
 
 const app = koa()
 
@@ -25,20 +26,21 @@ app.name = 'fimfic2epub-server'
 app.port = config.port
 if (config.proxy) app.proxy = config.proxy
 
-app.use(favicon(__dirname + '/favicon.ico'))
+app.use(favicon(path.join(__dirname, '/favicon.ico')))
 
 app.use(logger())
 
-app.use(route.get('/', function *() {
+app.use(route.get('/', function * () {
   yield send(this, './index.html')
 }))
 
-function *handleDownload (id) {
+function * handleDownload (id) {
   id = parseInt(id, 10)
   if (isNaN(id) || id === 0) {
     return
   }
 
+  let cacheEnabled = !!config.archive
   let useCache = false
   let storyInfo, cachedInfo
   let file, filename
@@ -67,7 +69,7 @@ function *handleDownload (id) {
       }
     }
 
-    if (useCache) {
+    if (cacheEnabled && useCache) {
       file = yield fsreadFile(storyFile)
       filename = FimFic2Epub.getFilename(storyInfo)
       console.log('Serving cached ' + filename)
@@ -75,18 +77,18 @@ function *handleDownload (id) {
       let pr = generateEpub(id)
       promiseCache.set(id, pr)
 
-      let o = yield pr
-      file = o.file
-      filename = o.filename
+      ;({ file, filename } = yield pr)
 
       promiseCache.delete(id)
+
       console.log('Serving generated ' + filename)
       fs.writeFile(storyFile, file)
       fs.writeFile(infoFile, JSON.stringify(storyInfo))
     }
   } else {
     // hook on to an already running generator
-    ({file, filename} = yield promiseCache.get(id))
+    console.log('Hooking on to running epub generator for story ' + id)
+    ;({ file, filename } = yield promiseCache.get(id))
   }
 
   this.response.type = 'application/epub+zip'
@@ -98,5 +100,6 @@ function *handleDownload (id) {
 app.use(route.get('/story/:id/download', handleDownload))
 app.use(route.get('/story/:id/download/*', handleDownload))
 
-app.listen(app.port)
-console.log('Listening on', app.port)
+app.listen(app.port, () => {
+  console.log('Listening on port', app.port)
+})
