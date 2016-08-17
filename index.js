@@ -6,8 +6,10 @@ const route = require('koa-route')
 const logger = require('koa-logger')
 const send = require('koa-send')
 const favicon = require('koa-favicon')
+const ratelimit = require('koa-ratelimit')
 const fs = require('fs')
 const path = require('path')
+const redis = require('redis')
 const thenify = require('thenify')
 
 const FimFic2Epub = require('fimfic2epub')
@@ -95,6 +97,19 @@ function * handleDownload (id) {
   this.response.attachment(filename)
 
   this.response.body = file
+}
+
+// this will rate limit the download/generation of epub files
+if (config.ratelimit && config.ratelimit.enabled) {
+  app.use(ratelimit({
+    db: redis.createClient(),
+    duration: (config.ratelimit.duration || 60) * 60 * 1000,
+    max: (config.ratelimit.max || 20),
+    id (context) {
+      console.log('IP:', context.ip)
+      return context.ip
+    }
+  }))
 }
 
 app.use(route.get('/story/:id/download', handleDownload))
