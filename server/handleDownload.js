@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const thenify = require('thenify')
 const FimFic2Epub = require('fimfic2epub')
-const generateEpub = require(path.join(__dirname, '/generator'))
+const generateEpub = require(path.join(__dirname, '/generateEpub'))
 const config = require(path.join(__dirname, '/../config.json'))
 
 const fsreadFile = thenify(fs.readFile)
@@ -35,7 +35,7 @@ function * handleDownload (id) {
         yield fsStat(storyFile)
         useCache = true
       } catch (err) {
-        console.error('' + err)
+        console.warn('' + err)
       }
     }
 
@@ -77,7 +77,7 @@ function * handleDownload (id) {
     ;({ file, filename } = yield promiseCache.get(id))
   }
 
-  this.response.type = 'application/epub+zip'
+  this.response.type = 'epub'
   this.response.attachment(filename)
 
   this.response.body = file
