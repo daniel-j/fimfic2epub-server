@@ -63,7 +63,8 @@ Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-
     } else {
       storyId = story
     }
-    if (isNaN(storyId) || storyId === '') {
+    storyId = parseInt(storyId, 10)
+    if (isNaN(storyId) || storyId <= 0) {
       alert('Invalid story id/url')
     } else {
       document.location.href = '/story/' + storyId + '/download/fimfic_' + storyId + '.epub'
