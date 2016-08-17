@@ -15,7 +15,7 @@ const promiseCache = new Map()
 
 function * handleDownload (id) {
   id = parseInt(id, 10)
-  if (isNaN(id) || id === 0) {
+  if (isNaN(id) || id <= 0) {
     return
   }
 
