@@ -37,7 +37,7 @@ function * handleDownload (id) {
   if (!inProgress) {
     if (cacheEnabled) {
       try {
-        cachedInfo = JSON.parse(yield fsreadFile(infoFile, 'binary'))
+        cachedInfo = JSON.parse(yield fsreadFile(infoFile, 'utf8'))
         yield fsStat(storyFile)
         useCache = true
       } catch (err) {
@@ -77,7 +77,7 @@ function * handleDownload (id) {
 
       console.log('Serving generated ' + filename)
       fs.writeFile(storyFile, file)
-      fs.writeFile(infoFile, JSON.stringify(storyInfo), 'binary')
+      fs.writeFile(infoFile, JSON.stringify(storyInfo), 'utf8')
     }
   } else {
     // hook on to an already running generator
