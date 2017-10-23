@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 'use strict'
 
+// Fix for mithril
+const noop = () => {}
+global.window = {
+  document: { createDocumentFragment: noop },
+  history: { pushState: noop }
+}
+
 const path = require('path')
 const koa = require('koa')
 const serverSetup = require(path.join(__dirname, '/server'))
