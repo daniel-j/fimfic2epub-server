@@ -2,11 +2,11 @@
 
 const FimFic2Epub = require('fimfic2epub')
 
-function generateEpub (id) {
+function generateEpub (id, options) {
   const ffc = new FimFic2Epub(id)
   ffc.on('progress', (percent, status) => {
     if (status) {
-      console.log(status)
+      // console.log(status)
     }
   })
   return ffc.fetchAll()
