@@ -27,6 +27,7 @@
       font-weight: normal;
       font-style: italic;
       margin-bottom: 0.1em;
+      margin-top: 1em;
     }
     p {
       margin: 0;
@@ -61,6 +62,7 @@
       cursor: pointer;
       color: black;
       text-decoration: none;
+      margin-bottom: 1em;
     }
     button:active, .button:active {
       background-color: black;
@@ -88,17 +90,10 @@ Here's what a generated EPUB looks like: <a href="http://books.djazz.se/?epub=ep
 You can send me a PM on my <a href="http://www.fimfiction.net/user/djazz">Fimfiction profile</a> if you want to contact me.</p>
 
 <h2 id="extension">Browser extension</h2>
-<p><a href="https://chrome.google.com/webstore/detail/fimfic2epub/fiijkoniocipeemlflajmmaecfhfcand" class="button" id="install-chrome">Install Chrome extension</a>
+<a href="https://chrome.google.com/webstore/detail/fimfic2epub/fiijkoniocipeemlflajmmaecfhfcand" class="button" id="install-chrome">Install Chrome extension</a>
+<a href="https://addons.mozilla.org/firefox/addon/fimfic2epub/" class="button" id="install-firefox">Install Firefox add-on</a>
 <br/>
-To use it after install, go to a story page on fimfiction and press the EPUB download below the story's chapters. Wait a while for the EPUB to generate.
-<br/>
-Firefox is supported, but it's not been uploaded to their Add-ons page yet.</p>
-
-
-<h2>Bookmarklet</h2>
-<p>Drag this to your bookmarks:</p>
-<a href="" id="bookmarklet" onclick="return false">📕 <em>fimfic<strong>2</strong>epub</em></a>
-<p>To use it, go to a story page on fimfiction and click the bookmark. Wait a while for the EPUB to generate.</p>
+To use it after it's installed, go to a story page on fimfiction and press the EPUB download below the story's chapters or the added <em>fimfic<b>2</b>epub</em> icon. Wait a while for the EPUB to generate.
 
 <h2 id="download">Direct story download</h2>
 
@@ -112,14 +107,19 @@ Fimfiction story id/url:<br/><input id="inputStory" name="inputStory" size=50/>
 <br/>
 <button>Download story</button>
 </form>
-<br/>
 After clicking download, wait a while for the EPUB to generate.
-<br/>
-<br/>
+
+
+<h2>Bookmarklet</h2>
+<p>Drag this to your bookmarks:</p>
+<a href="" id="bookmarklet" onclick="return false">📕 <em>fimfic<strong>2</strong>epub</em></a>
+<p>To use it, go to a story page on fimfiction and click the bookmark. Wait a while for the EPUB to generate.</p>
 <br/>
 
+
+
 <hr/>
-<p><em>Read more about the fimfic2epub converter <a href="https://github.com/daniel-j/fimfic2epub#readme">on Github</a>.
+<p><em>Read more about the fimfic<b>2</b>epub converter <a href="https://github.com/daniel-j/fimfic2epub#readme">on Github</a>.
 <br/>
 Source code for this server is <a href="https://github.com/daniel-j/fimfic2epub-server">here</a>.</em></p>
 <br/>
