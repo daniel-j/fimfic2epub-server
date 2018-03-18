@@ -4,7 +4,7 @@ const sendfile = require('koa-sendfile')
 const fs = require('fs')
 const path = require('path')
 const thenify = require('thenify')
-const FimFic2Epub = require('fimfic2epub')
+const FimFic2Epub = require('fimfic2epub').default
 const generateEpub = require(path.join(__dirname, '/generateEpub'))
 const config = require(path.join(__dirname, '/../config.json'))
 const spawn = require('child_process').spawn
@@ -45,7 +45,9 @@ function * handleDownload (id) {
         console.warn('' + err)
       }
     }
-
+    
+    var ffc = new FimFic2Epub(id)
+    
     try {
       storyInfo = yield FimFic2Epub.fetchStoryInfo(id)
     } catch (err) {
