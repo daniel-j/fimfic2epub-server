@@ -83,8 +83,8 @@ function * handleDownload (id) {
       promiseCache.delete(id)
 
       console.log('Serving generated ' + filename)
-      fs.writeFile(storyFile, file)
-      fs.writeFile(infoFile, JSON.stringify(storyInfo), 'utf8')
+      fs.writeFile(storyFile, file, () => {})
+      fs.writeFile(infoFile, JSON.stringify(storyInfo), 'utf8', () => {})
     }
   } else {
     // hook on to an already running generator
