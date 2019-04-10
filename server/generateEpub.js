@@ -1,6 +1,6 @@
 'use strict'
 
-const FimFic2Epub = require('fimfic2epub')
+const FimFic2Epub = require('fimfic2epub').default
 
 function generateEpub (id, options) {
   const ffc = new FimFic2Epub(id)
