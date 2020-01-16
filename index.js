@@ -2,11 +2,9 @@
 'use strict'
 
 // Fix for mithril
-const noop = () => {}
-global.window = {
-  document: { createDocumentFragment: noop },
-  history: { pushState: noop }
-}
+// use a mock DOM so we can run mithril in nodejs
+const mock = require('mithril/test-utils/browserMock')(global)
+global.requestAnimationFrame = mock.requestAnimationFrame
 
 const path = require('path')
 const koa = require('koa')
