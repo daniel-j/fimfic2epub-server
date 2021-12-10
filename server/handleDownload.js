@@ -70,7 +70,7 @@ function * handleDownload (id) {
       }
       yield sendfile(this, storyFile)
       if (outputKepub) {
-        fs.unlink(storyFile)
+        fs.unlink(storyFile, (err) => {err && console.error(err)})
       }
       return
     } else {
@@ -121,7 +121,7 @@ function kepubify (id, file, returnPath = false) {
           return
         }
         if (typeof file !== 'string') {
-          fs.unlink(epubPath)
+          fs.unlink(epubPath, (err) => {err && console.error(err)})
         }
         if (returnPath) {
           resolve(kepubPath)
@@ -132,7 +132,7 @@ function kepubify (id, file, returnPath = false) {
               return
             }
             resolve(data)
-            fs.unlink(kepubPath)
+            fs.unlink(kepubPath, (err) => {err && console.error(err)})
           })
         }
       })
